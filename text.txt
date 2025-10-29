@@ -1,0 +1,210 @@
+// package main
+
+// import (
+// 	"fmt"
+// 	"sync"
+// )
+
+// // type User struct {
+// // 	Name string
+// // 	Age  int
+// // 	Surname string
+// // }
+
+// // func setName(u *User,name string){
+// // 	u.Name = name;
+// // 	fmt.Print(u);
+// // }
+
+// // func (u User) Greet() string{
+// // 	return u.Name;
+// // }
+
+// // type Payment interface {
+// // 	Pay(amount int) int;
+// // }
+
+// // type CreditCard struct{
+// // 	Number int
+// // }
+
+// // func (c CreditCard) Pay(a int) int{
+// // 	fmt.Print("Payment with credit card")
+// //     return a;
+// // }
+
+// // func ProcessPay( p Payment, amount int){
+// // 	 p.Pay(amount);
+// // }
+
+// // type OrderStatus string
+
+// // const (
+// // 	success OrderStatus ="Success"
+// // 	failed  = "Failed"
+// // 	pending = "pending"
+// // )
+
+// // func checkOrder(status OrderStatus){
+// // 	 fmt.Print(status)
+
+// // }
+
+// // func printNumber(number int, wg *sync.WaitGroup){
+
+// // 	defer wg.Done();
+
+// // 	fmt.Println(number);
+// // }
+
+// // func numberWithChannel(chanNum chan int  ,num int ){
+
+// // 	  chanNum <- num;
+// // }
+
+// type Post struct {
+// 	count int
+// 	mu sync.Mutex
+// }
+
+// func (p *Post) inc(wg *sync.WaitGroup){
+
+// 	defer wg.Done();
+
+// 	p.mu.Lock();
+// 	p.count = p.count + 1;
+// 	p.mu.Unlock()
+// }
+
+// func main() {
+
+// 	// creditcard := CreditCard {
+// 	// 	 Number:  1,
+// 	// }
+
+// 	// ProcessPay(creditcard,1);
+
+// 	// checkOrder(success)
+
+// 	//  a := 10;
+// 	//  s := "A";
+// 	//  var characters []rune =  []rune{'a','b'};
+// 	// var nums []int = []int{1, 2, 3}
+
+// 	// words := []string{"banana", "zpe", "cherry", "mango"}
+
+// 	// sort.Slice(words,func (a int,b int)bool {
+// 	// 	return len(words[a])<len(words[b]);
+// 	// })
+
+// 	// fmt.Println(words);
+
+// 	// fmt.Print(nums);
+
+// 	// for index, value :=  range nums {
+// 	// 	 fmt.Print(index,value);
+// 	// }
+
+// 	//  for  i := 0;  i< len(characters); i++ {
+// 	//        fmt.Println(string(characters[i]));
+// 	//  }
+
+// 	//  for index , value  := range characters {
+// 	// 	 fmt.Print(index," ",string(value));
+// 	// 	 fmt.Println("");
+// 	//  }
+
+// 	// a := false
+
+// 	//  if a {
+// 	//     fmt.Print("true")
+// 	//  } else if !a  {
+// 	//     fmt.Print("false")
+// 	//  }
+
+// 	//  switch s {
+// 	// 	case "A"  : {
+// 	//           fmt.Print("a option")
+// 	// 	}
+// 	// 	default  : {
+// 	//             fmt.Print("default")
+// 	// 	}
+// 	//  }
+
+// 	// fmt.Println(s);
+
+// 	//  fmt.Println("Hi there!" , a);
+
+// 	// nums := []int{};
+
+// 	// nums = append(nums,11,10,101,5);
+
+// 	// sort.Slice(nums, func(i, j int) bool {
+// 	// return nums[i] > nums[j] // Ascending
+// 	// })
+
+// 	// nums = append(nums[:2])
+
+// 	// dequeue = nums[1:];
+
+// 	//    sort.Ints(nums);
+
+// 	//    sort.Sort(sort.Reverse(sort.IntSlice(nums)))
+
+// 	//   object := map[string]string{
+// 	// 	 "ol" :"ok",
+// 	//   };
+
+// 	//   object["indra"] = "ok";
+
+// 	// object["ol"] = "first";
+
+// 	// delete(object,"ol");
+
+// 	// fmt.Print(object);
+
+// 	// user := User{
+// 	// 	Name: "Indra",
+// 	// }
+
+// 	// user := User {
+// 	// 	 Name: "indra",
+// 	// }
+
+//     // setName(&user,"prince");
+
+// 	// date := time.Now();
+// 	// iso := date.Format(time.RFC3339)
+//     // fmt.Println(iso);
+// 	// fmt.Print(user.Greet())
+
+// // var wg sync.WaitGroup
+// //  for i:=0; i<10; i++ {
+// // 	wg.Add(1)
+// //    go printNumber(i,&wg)
+// //  }
+
+// //  wg.Wait();
+
+// // numChan := make(chan int);
+
+// // go numberWithChannel(numChan,5);
+
+// // fmt.Print(<-numChan);
+
+//    var wg sync.WaitGroup;
+
+//     post := Post{
+// 		 count:  0,
+// 	}
+
+// 	for i:=0; i<100; i++ {
+// 		wg.Add(1)
+// 		go post.inc(&wg);
+// 	}
+
+// 	wg.Wait()
+
+// 	fmt.Print(post.count)
+
+// }
