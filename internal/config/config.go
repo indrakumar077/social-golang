@@ -8,11 +8,13 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// Config holds the application configuration
 type Config struct {
 	ServerPort string
 	DataBase   DataBaseConfig
 }
 
+// DataBaseConfig holds the database configuration
 type DataBaseConfig struct {
 	Host     string
 	Port     string
@@ -24,6 +26,7 @@ type DataBaseConfig struct {
 	MinConn  int32
 }
 
+// Load loads configuration from environment variables
 func Load() (*Config, error) {
 	// Load environment variables
 	err := godotenv.Load()

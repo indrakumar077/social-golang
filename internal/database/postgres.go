@@ -10,11 +10,12 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+// DataBase represents a database connection pool
 type DataBase struct {
 	Pool *pgxpool.Pool
 }
 
-
+// New creates a new database connection pool
 func New(cfg *config.Config) (*DataBase, error) {
 	// Validate database configuration
 	if err := cfg.DataBase.Validate(); err != nil {
@@ -50,6 +51,7 @@ func New(cfg *config.Config) (*DataBase, error) {
 	return &DataBase{Pool: pool}, nil
 }
 
+// Close closes the database connection pool
 func (db *DataBase) Close() {
 	db.Pool.Close()
 	log.Println("Database connection closed")

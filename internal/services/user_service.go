@@ -11,12 +11,16 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// Ensure UserService implements IUserService interface
+var _ IUserService = (*UserService)(nil)
+
 type UserService struct {
-	userRepository *repository.UserRepository
+	userRepository repository.IUserRepository
 	validator      *validator.Validate
 }
 
-func NewUserService(userRepository *repository.UserRepository) *UserService {
+// NewUserService creates a new user service
+func NewUserService(userRepository repository.IUserRepository) *UserService {
 	return &UserService{
 		userRepository: userRepository,
 		validator:      validator.New(),
@@ -32,20 +36,18 @@ func (s *UserService) hashPassword(password string) (string, error) {
 }
 
 func (s *UserService) validateCreateUserRequests(req *models.CreateUserRequest) error {
-	// Leverage struct tags in models.CreateUserRequest via go-playground/validator
 	if err := s.validator.Struct(req); err != nil {
-		// Provide a concise message; for production, map each field error as needed
 		return fmt.Errorf("validation failed: %w", err)
 	}
-	// Extra lightweight sanity checks if desired
+
 	if strings.TrimSpace(req.Username) == "" || strings.TrimSpace(req.Email) == "" || strings.TrimSpace(req.Name) == "" {
 		return fmt.Errorf("required fields cannot be empty")
 	}
 	return nil
 }
 
+// CreateUser creates a new user
 func (s *UserService) CreateUser(ctx context.Context, req *models.CreateUserRequest) (*models.User, error) {
-
 	if err := s.validateCreateUserRequests(req); err != nil {
 		return nil, fmt.Errorf("invalid request: %w", err)
 	}
@@ -61,11 +63,10 @@ func (s *UserService) CreateUser(ctx context.Context, req *models.CreateUserRequ
 	}
 
 	return user, nil
-
 }
 
+// GetUserById retrieves a user by ID
 func (s *UserService) GetUserById(ctx context.Context, id int) (*models.User, error) {
-
 	if id < 0 {
 		return nil, fmt.Errorf("invalid id %d", id)
 	}
@@ -75,5 +76,4 @@ func (s *UserService) GetUserById(ctx context.Context, id int) (*models.User, er
 		return nil, fmt.Errorf("error while getting user by id %w", err)
 	}
 	return user, nil
-
 }

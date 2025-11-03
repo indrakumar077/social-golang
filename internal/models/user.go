@@ -2,6 +2,7 @@ package models
 
 import "time"
 
+// User represents a user entity in the system
 type User struct {
 	ID         int       `json:"id" db:"id"`
 	Username   string    `json:"username" db:"username"`
@@ -16,6 +17,7 @@ type User struct {
 	UpdatedAt  time.Time `json:"updated_at" db:"updated_at"`
 }
 
+// CreateUserRequest represents the request payload for creating a user
 type CreateUserRequest struct {
 	Username   string  `json:"username" validate:"required,min=3,max=50"`
 	Email      string  `json:"email" validate:"required,email"`
@@ -26,6 +28,7 @@ type CreateUserRequest struct {
 	Bio        *string `json:"bio,omitempty"`
 }
 
+// UserResponse represents the user data returned in API responses (password excluded)
 type UserResponse struct {
 	ID         int       `json:"id"`
 	Username   string    `json:"username"`
