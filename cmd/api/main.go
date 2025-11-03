@@ -6,8 +6,7 @@ import (
 	"learning/internal/database"
 	"learning/internal/handlers"
 	"learning/internal/middleware"
-	"learning/internal/repository"
-	"learning/internal/services"
+	"learning/internal/user"
 	"log"
 	"net/http"
 	"os"
@@ -36,11 +35,7 @@ func main() {
 	defer db.Close()
 	log.Println("Database connected successfully")
 
-	// Initialize dependencies
-	userRepository := repository.NewUserRepository(db)
-	userService := services.NewUserService(userRepository)
-	userHandler := handlers.NewUserHandler(userService)
-	healthHandler := handlers.NewHealthHandler(db)
+	// health routes will be registered via convenience function
 
 	// Setup router with middleware
 	router := mux.NewRouter()
@@ -53,8 +48,9 @@ func main() {
 
 	// Register routes
 	apiRouter := router.PathPrefix("/api/v1").Subrouter()
-	userHandler.RegisterRoutes(apiRouter)
-	healthHandler.RegisterRoutes(router)
+
+	user.Register(apiRouter, db)
+	handlers.RegisterHealth(router, db)
 
 	log.Println("Routes registered successfully")
 

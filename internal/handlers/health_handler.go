@@ -25,6 +25,12 @@ func (h *HealthHandler) RegisterRoutes(r *mux.Router) {
 	r.HandleFunc("/health/ready", h.Readiness).Methods(http.MethodGet)
 }
 
+// RegisterHealth is a convenience function that composes and registers routes
+func RegisterHealth(r *mux.Router, db *database.DataBase) {
+	h := NewHealthHandler(db)
+	h.RegisterRoutes(r)
+}
+
 // Health returns basic health status
 func (h *HealthHandler) Health(w http.ResponseWriter, r *http.Request) {
 	utils.WriteSuccess(w, http.StatusOK, map[string]string{
