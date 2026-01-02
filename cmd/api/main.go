@@ -4,9 +4,6 @@ import (
 	"context"
 	"learning/internal/config"
 	"learning/internal/database"
-	"learning/internal/handlers"
-	"learning/internal/middleware"
-	"learning/internal/user"
 	"log"
 	"net/http"
 	"os"
@@ -41,18 +38,18 @@ func main() {
 	router := mux.NewRouter()
 
 	// Apply global middleware
-	router.Use(middleware.LoggingMiddleware)
-	router.Use(middleware.RecoveryMiddleware)
-	router.Use(middleware.CORSMiddleware)
-	router.Use(middleware.SecurityHeadersMiddleware)
+	// router.Use(middleware.LoggingMiddleware)
+	// router.Use(middleware.RecoveryMiddleware)
+	// router.Use(middleware.CORSMiddleware)
+	// router.Use(middleware.SecurityHeadersMiddleware)
 
-	// Register routes
-	apiRouter := router.PathPrefix("/api/v1").Subrouter()
+	// // Register routes
+	// apiRouter := router.PathPrefix("/api/v1").Subrouter()
 
-	user.Register(apiRouter, db)
-	handlers.RegisterHealth(router, db)
+	// user.Register(apiRouter, db)
+	// handlers.RegisterHealth(router, db)
 
-	log.Println("Routes registered successfully")
+	// log.Println("Routes registered successfully")
 
 	// Setup HTTP server
 	server := &http.Server{

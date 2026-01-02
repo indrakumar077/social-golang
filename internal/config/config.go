@@ -29,6 +29,7 @@ type DataBaseConfig struct {
 // Load loads configuration from environment variables
 func Load() (*Config, error) {
 	// Load environment variables
+
 	err := godotenv.Load()
 	if err != nil {
 		return nil, fmt.Errorf("failed to load .env file: %w", err)
@@ -59,7 +60,6 @@ func Load() (*Config, error) {
 		},
 	}
 
-	// Validate configuration
 	if err := config.Validate(); err != nil {
 		return nil, fmt.Errorf("configuration validation failed: %w", err)
 	}
