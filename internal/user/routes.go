@@ -11,6 +11,6 @@ func RegisterRoutes(router *mux.Router, pool *pgxpool.Pool) {
 	service := NewService(repo)
 	handler := NewHandler(service)
 
-	router.PathPrefix("/users").Subrouter()
-	router.HandleFunc("", handler.Create).Methods("POST")
+	userRouter := router.PathPrefix("/users").Subrouter()
+	userRouter.HandleFunc("", handler.Create).Methods("POST")
 }

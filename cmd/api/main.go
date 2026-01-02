@@ -36,10 +36,10 @@ func main() {
 	// health routes will be registered via convenience function
 
 	// Setup router with middleware
-	router := mux.NewRouter()
+	router := mux.NewRouter().StrictSlash(true)
 
-	router.PathPrefix("/api").Subrouter()
-	user.RegisterRoutes(router, db.Pool)
+	prefixRouter := router.PathPrefix("/api").Subrouter()
+	user.RegisterRoutes(prefixRouter, db.Pool)
 
 	// log.Println("Routes registered successfully")
 
