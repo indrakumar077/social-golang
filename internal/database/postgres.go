@@ -38,8 +38,6 @@ func New(cfg *config.Config) (*DataBase, error) {
 	}
 
 	// Test the connection
-	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	// defer cancel()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -49,12 +47,7 @@ func New(cfg *config.Config) (*DataBase, error) {
 		return nil, fmt.Errorf("database connection test failed: %w", err)
 	}
 
-	// err = pool.Ping(ctx)
-	// if err != nil {
-	// 	return nil, fmt.Errorf("database connection test failed: %w", err)
-	// }
-
-	// log.Println("Database connected successfully")
+	log.Println("Database connected successfully")
 
 	return &DataBase{Pool: pool}, nil
 }
