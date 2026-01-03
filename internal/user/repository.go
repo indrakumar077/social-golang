@@ -2,7 +2,10 @@ package user
 
 import (
 	"context"
+	"errors"
+	"strings"
 
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -12,6 +15,19 @@ type Repository struct {
 
 func NewRespository(pool *pgxpool.Pool) *Repository {
 	return &Repository{pool: pool}
+}
+
+func isUniqueConstraintError(err error, field string) bool {
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) {
+		// PostgreSQL unique constraint violation code
+		if pgErr.Code == "23505" {
+			// Check if error message contains the field name
+			return strings.Contains(pgErr.ConstraintName, field) ||
+				strings.Contains(pgErr.Message, field)
+		}
+	}
+	return false
 }
 
 func (r *Repository) Create(ctx context.Context, u *User) (*User, error) {
@@ -24,6 +40,16 @@ func (r *Repository) Create(ctx context.Context, u *User) (*User, error) {
 		u.MiddleName, u.Surname, u.Bio, u.Active,
 	).Scan(&u.ID, &u.CreatedAt, &u.UpdatedAt)
 	if err != nil {
+		// Check for unique constraint violations
+		if isUniqueConstraintError(err, "username") {
+			return nil, errors.New("username already exists")
+		}
+		if isUniqueConstraintError(err, "email") {
+			return nil, errors.New("email already exists")
+		}
+		if isUniqueConstraintError(err, "phone") {
+			return nil, errors.New("phone already exists")
+		}
 		return nil, err
 	}
 	return u, nil

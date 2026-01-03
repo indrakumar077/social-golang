@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"learning/internal/errors"
 	"learning/internal/utils"
+	"log"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -36,8 +37,9 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.service.Create(r.Context(), &req)
 	if err != nil {
+		log.Printf("Error creating user: %v", err)
 		if appErr, ok := err.(*errors.AppError); ok {
-			utils.WriteError(w, appErr.Code, appErr.Message)
+			utils.WriteError(w, appErr.Code, err.Error())
 			return
 		}
 		utils.WriteError(w, http.StatusInternalServerError, "failed to create user")
