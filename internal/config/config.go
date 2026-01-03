@@ -12,6 +12,7 @@ import (
 type Config struct {
 	ServerPort string
 	DataBase   DataBaseConfig
+	S3         S3Config
 }
 
 // DataBaseConfig holds the database configuration
@@ -24,6 +25,14 @@ type DataBaseConfig struct {
 	SSLMode  string
 	MaxConn  int32
 	MinConn  int32
+}
+
+// S3Config holds the S3 configuration
+type S3Config struct {
+	Region          string
+	Bucket          string
+	AccessKeyID     string
+	SecretAccessKey string
 }
 
 // Load loads configuration from environment variables
@@ -57,6 +66,12 @@ func Load() (*Config, error) {
 			SSLMode:  getEnvWithDefault("DB_SSLMODE", "disable"),
 			MaxConn:  int32(maxConn),
 			MinConn:  int32(minConn),
+		},
+		S3: S3Config{
+			Region:          getEnvWithDefault("AWS_REGION", "us-east-1"),
+			Bucket:          getEnvWithDefault("AWS_S3_BUCKET", ""),
+			AccessKeyID:     getEnvWithDefault("AWS_ACCESS_KEY_ID", ""),
+			SecretAccessKey: getEnvWithDefault("AWS_SECRET_ACCESS_KEY", ""),
 		},
 	}
 

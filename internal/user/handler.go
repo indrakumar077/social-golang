@@ -2,6 +2,7 @@ package user
 
 import (
 	"encoding/json"
+	"io"
 	"learning/internal/errors"
 	"learning/internal/utils"
 	"log"
@@ -23,11 +24,53 @@ func NewHandler(service *Service) *Handler {
 }
 
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
-	var req CreateUserRequest
 
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+	var req CreateUserRequest
+	var photoFile io.Reader
+	var photoFilename, photoContentType string
+
+	// Configure multipart parsing - sab kuch bahar se
+	opts := &utils.ParseMultipartRequestOptions{
+		MaxMemory:     10 << 20, // 10MB
+		DataFieldName: "data",
+		FileFields: []utils.FileFieldConfig{
+			{
+				FieldName:    "photo",                                          // Field name
+				MaxSize:      5 << 20,                                          // 5MB limit
+				AllowedTypes: []string{"image/jpeg", "image/png", "image/jpg"}, // Allowed types
+				Required:     false,                                            // Optional
+			},
+		},
+	}
+
+	// Parse request
+	jsonData, files, err := utils.ParseMultipartRequest(r, opts)
+	if err != nil {
+		if reqErr, ok := err.(*utils.RequestError); ok {
+			utils.WriteError(w, reqErr.StatusCode, reqErr.Message)
+			return
+		}
 		utils.WriteError(w, http.StatusBadRequest, err.Error())
 		return
+	}
+
+	// Unmarshal JSON data
+	if err := json.Unmarshal(jsonData, &req); err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	// Get file (already validated by utility)
+	if photoFileData, exists := files["photo"]; exists {
+		defer func() {
+			if closer, ok := photoFileData.File.(io.Closer); ok {
+				closer.Close()
+			}
+		}()
+
+		photoFile = photoFileData.File
+		photoFilename = photoFileData.Filename
+		photoContentType = photoFileData.ContentType
 	}
 
 	if err := h.validate.Struct(&req); err != nil {
@@ -35,7 +78,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.service.Create(r.Context(), &req)
+	user, err := h.service.Create(r.Context(), &req, photoFile, photoFilename, photoContentType)
 	if err != nil {
 		log.Printf("Error creating user: %v", err)
 		if appErr, ok := err.(*errors.AppError); ok {

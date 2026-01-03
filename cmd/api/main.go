@@ -4,6 +4,7 @@ import (
 	"context"
 	"learning/internal/config"
 	"learning/internal/database"
+	"learning/internal/storage"
 	"learning/internal/user"
 	"log"
 	"net/http"
@@ -33,13 +34,20 @@ func main() {
 	defer db.Close()
 	log.Println("Database connected successfully")
 
+	// Initialize S3 client
+	s3Client, err := storage.NewS3Client(&cfg.S3)
+	if err != nil {
+		log.Fatal("Failed to initialize S3 client:", err)
+	}
+	log.Println("S3 client initialized successfully")
+
 	// health routes will be registered via convenience function
 
 	// Setup router with middleware
 	router := mux.NewRouter().StrictSlash(true)
 
 	prefixRouter := router.PathPrefix("/api").Subrouter()
-	user.RegisterRoutes(prefixRouter, db.Pool)
+	user.RegisterRoutes(prefixRouter, db.Pool, s3Client)
 
 	// log.Println("Routes registered successfully")
 
