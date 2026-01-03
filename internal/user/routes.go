@@ -15,4 +15,5 @@ func RegisterRoutes(router *mux.Router, pool *pgxpool.Pool, s3Client *storage.S3
 
 	userRouter := router.PathPrefix("/users").Subrouter()
 	userRouter.HandleFunc("", handler.Create).Methods("POST")
+	userRouter.HandleFunc("/{id}", handler.GetByID).Methods("GET")
 }

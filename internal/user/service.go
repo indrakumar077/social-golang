@@ -6,6 +6,7 @@ import (
 	"learning/internal/errors"
 	"learning/internal/storage"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -70,4 +71,12 @@ func (s *Service) Create(ctx context.Context, req *CreateUserRequest, photoFile 
 	}
 
 	return ToUserReponse(createUser), nil
+}
+
+func (s *Service) GetByID(ctx context.Context, id uuid.UUID) (*UserResponse, error) {
+	user, err := s.repo.GetByID(ctx, id)
+	if err != nil {
+		return nil, errors.WrapWithMessage(err, 500, err.Error())
+	}
+	return ToUserReponse(user), nil
 }

@@ -9,6 +9,8 @@ import (
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 )
 
 type Handler struct {
@@ -90,4 +92,32 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.WriteSuccess(w, http.StatusCreated, user)
+}
+
+func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	idStr, ok := vars["id"]
+	if !ok {
+		utils.WriteError(w, http.StatusBadRequest, "User id is required")
+		return
+	}
+
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadGateway, "Id is not uuid")
+		return
+	}
+
+	user, err := h.service.GetByID(r.Context(), id)
+	if err != nil {
+
+		if appErr, ok := err.(*errors.AppError); ok {
+			utils.WriteError(w, appErr.Code, appErr.Error())
+			return
+		}
+		utils.WriteError(w, http.StatusInternalServerError, "Internal server error")
+	}
+
+	utils.WriteSuccess(w, http.StatusOK, user)
 }
