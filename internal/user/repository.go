@@ -86,3 +86,35 @@ func (r *Repository) GetByID(ctx context.Context, id uuid.UUID) (*User, error) {
 
 	return user, nil
 }
+
+func (r *Repository) GetByEmail(ctx context.Context, email string) (*User, error) {
+	query := `SELECT id, username, email, phone, name, password, middle_name, surname, bio, 
+		active, created_at, updated_at, profile_photo_url
+		FROM users WHERE email = $1`
+
+	user, err := scanUser(r.pool.QueryRow(ctx, query, email))
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, errors.New("user not found")
+		}
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (r *Repository) GetByUsername(ctx context.Context, username string) (*User, error) {
+	query := `SELECT id, username, email, phone, name, password, middle_name, surname, bio, 
+		active, created_at, updated_at, profile_photo_url
+		FROM users WHERE username = $1`
+
+	user, err := scanUser(r.pool.QueryRow(ctx, query, username))
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, errors.New("user not found")
+		}
+		return nil, err
+	}
+
+	return user, nil
+}

@@ -76,7 +76,32 @@ func (s *Service) Create(ctx context.Context, req *CreateUserRequest, photoFile 
 func (s *Service) GetByID(ctx context.Context, id uuid.UUID) (*UserResponse, error) {
 	user, err := s.repo.GetByID(ctx, id)
 	if err != nil {
-		return nil, errors.WrapWithMessage(err, 500, err.Error())
+		if err.Error() == "user not found" {
+			return nil, errors.NewAppError(404, "user not found", err)
+		}
+		return nil, errors.WrapWithMessage(err, 500, "failed to get user")
+	}
+	return ToUserReponse(user), nil
+}
+
+func (s *Service) GetByEmail(ctx context.Context, email string) (*UserResponse, error) {
+	user, err := s.repo.GetByEmail(ctx, email)
+	if err != nil {
+		if err.Error() == "user not found" {
+			return nil, errors.NewAppError(404, "user not found", err)
+		}
+		return nil, errors.WrapWithMessage(err, 500, "failed to get user")
+	}
+	return ToUserReponse(user), nil
+}
+
+func (s *Service) GetByUsername(ctx context.Context, username string) (*UserResponse, error) {
+	user, err := s.repo.GetByUsername(ctx, username)
+	if err != nil {
+		if err.Error() == "user not found" {
+			return nil, errors.NewAppError(404, "user not found", err)
+		}
+		return nil, errors.WrapWithMessage(err, 500, "failed to get user")
 	}
 	return ToUserReponse(user), nil
 }

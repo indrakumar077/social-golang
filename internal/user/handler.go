@@ -105,18 +105,63 @@ func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
 
 	id, err := uuid.Parse(idStr)
 	if err != nil {
-		utils.WriteError(w, http.StatusBadGateway, "Id is not uuid")
+		utils.WriteError(w, http.StatusBadRequest, "Id is not uuid")
 		return
 	}
 
 	user, err := h.service.GetByID(r.Context(), id)
 	if err != nil {
-
+		log.Printf("Error getting user by ID: %v", err)
 		if appErr, ok := err.(*errors.AppError); ok {
 			utils.WriteError(w, appErr.Code, appErr.Error())
 			return
 		}
 		utils.WriteError(w, http.StatusInternalServerError, "Internal server error")
+		return
+	}
+
+	utils.WriteSuccess(w, http.StatusOK, user)
+}
+
+func (h *Handler) GetByEmail(w http.ResponseWriter, r *http.Request) {
+	// Get email from query parameter
+	email := r.URL.Query().Get("email")
+	if email == "" {
+		utils.WriteError(w, http.StatusBadRequest, "email parameter is required")
+		return
+	}
+
+	user, err := h.service.GetByEmail(r.Context(), email)
+	if err != nil {
+		log.Printf("Error getting user by email: %v", err)
+		if appErr, ok := err.(*errors.AppError); ok {
+			utils.WriteError(w, appErr.Code, appErr.Error())
+			return
+		}
+		utils.WriteError(w, http.StatusInternalServerError, "Internal server error")
+		return
+	}
+
+	utils.WriteSuccess(w, http.StatusOK, user)
+}
+
+func (h *Handler) GetByUsername(w http.ResponseWriter, r *http.Request) {
+	// Get username from query parameter
+	username := r.URL.Query().Get("username")
+	if username == "" {
+		utils.WriteError(w, http.StatusBadRequest, "username parameter is required")
+		return
+	}
+
+	user, err := h.service.GetByUsername(r.Context(), username)
+	if err != nil {
+		log.Printf("Error getting user by username: %v", err)
+		if appErr, ok := err.(*errors.AppError); ok {
+			utils.WriteError(w, appErr.Code, appErr.Error())
+			return
+		}
+		utils.WriteError(w, http.StatusInternalServerError, "Internal server error")
+		return
 	}
 
 	utils.WriteSuccess(w, http.StatusOK, user)
